@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
-@Tag(name = "GameController",description = "Controller for managing games operations")
+@Tag(name = "GameController", description = "Controller for managing games operations")
 @Slf4j
 @RestController
 @RequestMapping("games")
@@ -28,7 +28,7 @@ public class GameController {
 
     @Operation(summary = "Get all games", description = "Returns a list of games")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = GameDto.class)))})
+            @ApiResponse(responseCode = "200", content = { @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = GameDto.class))) })
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
