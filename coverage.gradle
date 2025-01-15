@@ -1,0 +1,51 @@
+def jacocoExclusions = ['games/Application.class',
+                        'games/constants/*',
+                        'games/enums/*',
+                        'games/configuration/*',
+                        'games/model/*',
+                        'games/dto/*',
+                        'games/filter/*',
+                        'games/exception/*']
+
+jacocoTestReport {
+    getExecutionData().from(fileTree(dir: "${buildDir}/jacoco", include: "**/*.exec"))
+
+    reports {
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+    violationRules {
+        rule {
+            enabled = true
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.85
+            }
+        }
+        rule {
+            enabled = true
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.8
+            }
+        }
+    }
+}
+jacocoTestReport {
+    dependsOn test
+}

@@ -1,0 +1,4 @@
+test {
+    jvmArgs '-Xms128m', '-Xmx512m', '-XX:+DisableExplicitGC'
+    finalizedBy jacocoTestReport
+}
