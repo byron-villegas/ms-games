@@ -2,7 +2,7 @@
 FROM gradle:8.12.0-jdk21 as build
 
 # Set work dir
-WORKDIR /app
+WORKDIR /project
 
 COPY --chown=gradle:gradle . /project
 RUN gradle build
