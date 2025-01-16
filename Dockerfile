@@ -11,7 +11,7 @@ FROM openjdk:21-jdk
 EXPOSE 8080
 
 # Copy jar from build to /app dir
-COPY --from=build /project/src/build/libs/ms-games-1.0.0.jar /app/app.jar
+COPY --from=build /app/build/libs/ms-games-1.0.0.jar /app/app.jar
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
