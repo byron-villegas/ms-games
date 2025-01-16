@@ -19,16 +19,14 @@ public class OpenApiConfiguration {
     private String licenseUrl;
     private Server server;
 
-    @Getter
-    @Setter
+    @Data
     static class Contact {
         private String name;
         private String url;
         private String email;
     }
 
-    @Getter
-    @Setter
+   @Data
     static class Server {
         private String url;
         private String description;
