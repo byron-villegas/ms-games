@@ -1,39 +1,49 @@
 package games.configuration;
 
+import games.filter.HttpRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfiguration {
     private final SecurityConfiguration securityConfiguration;
-    //private final JwtTokenFilter jwtTokenFilter;
+    private final HttpRequestFilter httpRequestFilter;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfiguration()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
+                        .authenticationEntryPoint((request, response, ex) -> response
+                                .sendError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage())))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(securityConfiguration
                                 .getWhiteListUrls()
                                 .toArray(new String[0]))
                         .permitAll()
                         .anyRequest()
-                        .authenticated());
+                        .authenticated())
+                .addFilterBefore(httpRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Used by Spring Security if CORS is enabled.
-    @Bean
-    public CorsFilter corsFilter() {
+    public UrlBasedCorsConfigurationSource corsConfiguration() {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -45,6 +55,6 @@ public class WebSecurityConfiguration {
         urlBasedCorsConfigurationSource
                 .registerCorsConfiguration(securityConfiguration.getCors().getPattern(), corsConfiguration);
 
-        return new CorsFilter(urlBasedCorsConfigurationSource);
+        return urlBasedCorsConfigurationSource;
     }
 }
