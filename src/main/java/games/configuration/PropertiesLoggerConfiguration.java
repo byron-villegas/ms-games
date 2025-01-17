@@ -13,37 +13,45 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Slf4j
 @Configuration
 @ConditionalOnExpression("'${logging.level.web}'.equalsIgnoreCase('INFO') or '${logging.level.web}'.equalsIgnoreCase('DEBUG')")
 public class PropertiesLoggerConfiguration {
+    private static final String TITLE_ENVIRONMENT_AND_CONFIGURATION = "Environment and configuration";
+    private static final List<String> PROPERTIES_TO_EXCLUDE = Arrays.asList("credentials", "password", "token",
+            "secret", "host", "uri");
+
+
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
         final Environment environment = event.getApplicationContext().getEnvironment();
         StringBuilder stringBuilderProperties = new StringBuilder();
 
-        // Titulo inicial
+        // Initial title
         stringBuilderProperties
                 .append(Constants.LINE_BREAK)
                 .append(Strings.repeat(Constants.EQUAL, 42))
                 .append(Constants.SPACE)
-                .append(Constants.BEGIN_TITLE_ENVIRONMENT_AND_CONFIGURATION)
+                .append(TITLE_ENVIRONMENT_AND_CONFIGURATION)
                 .append(Constants.SPACE)
                 .append(Strings.repeat(Constants.EQUAL, 42))
                 .append(Constants.LINE_BREAK);
 
         final MutablePropertySources mutablePropertySources = ((AbstractEnvironment) environment).getPropertySources();
 
-        // Agrega propiedad
+        // Add property
         StreamSupport
                 .stream(mutablePropertySources.spliterator(), false)
                 .filter(propertySource -> propertySource instanceof OriginTrackedMapPropertySource)
                 .map(propertySource -> ((EnumerablePropertySource<?>) propertySource).getPropertyNames())
                 .flatMap(Arrays::stream)
                 .distinct()
-                .filter(propertySource -> Constants.PROPERTIES_TO_EXCLUDE.stream().noneMatch(propertySource::contains))
+                .filter(propertySource -> PROPERTIES_TO_EXCLUDE
+                        .stream()
+                        .noneMatch(key -> propertySource.toLowerCase().contains(key)))
                 .forEach(property -> stringBuilderProperties
                         .append(property)
                         .append(Constants.COLON)
@@ -51,7 +59,7 @@ public class PropertiesLoggerConfiguration {
                         .append(environment.getProperty(property))
                         .append(Constants.LINE_BREAK));
 
-        // Termino del mensaje
+        // End of message
         stringBuilderProperties.append(Strings.repeat(Constants.EQUAL, 115));
 
         log.info(stringBuilderProperties.toString());

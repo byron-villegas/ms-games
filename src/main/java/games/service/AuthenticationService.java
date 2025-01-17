@@ -1,13 +1,10 @@
 package games.service;
 
-
 import games.dto.AuthenticationResponseDto;
 import games.util.JwtTokenUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
