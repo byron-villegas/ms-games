@@ -42,3 +42,11 @@ jobs:
       run: chmod +x gradlew
     - name: Test with Gradle
       run: ./gradlew test
+    - uses: actions/upload-artifact@v4
+      with:
+        name: tests
+        path: build/reports/tests
+    - uses: actions/upload-artifact@v4
+      with:
+        name: jacocoReport
+        path: build/jacocoHtml
