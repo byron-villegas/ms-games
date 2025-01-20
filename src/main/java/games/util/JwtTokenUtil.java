@@ -1,6 +1,7 @@
 package games.util;
 
 import games.configuration.JwtConfiguration;
+import games.constants.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -18,26 +19,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
     private final JwtConfiguration jwtConfiguration;
-    private static final String USERNAME = "username";
-    private static final String ROLES = "roles";
-    private static final String RUT = "rut";
-    private static final int MIL = 1000;
-    private static final String EXPIRATION = "exp";
 
-    public String generateToken(final String rutCliente, final String username, final List<String> roles) {
-        return createToken(rutCliente, username, roles);
+    public String generateToken(final String rut, final String username, final List<String> roles) {
+        return createToken(rut, username, roles);
     }
 
-    private String createToken(final String rutCliente, final String username, final List<String> roles) {
-        final Map<String, Object> claims = new HashMap<>();
-        claims.put(RUT, rutCliente);
-        claims.put(USERNAME, username);
-        claims.put(ROLES, roles);
+    private String createToken(final String rut, final String username, final List<String> roles) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(Constants.RUT, rut);
+        claims.put(Constants.USERNAME, username);
+        claims.put(Constants.ROLES, roles);
 
         return Jwts
                 .builder()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + (jwtConfiguration.getDuration() * jwtConfiguration.getDuration()) * MIL))
+                .expiration(new Date(System.currentTimeMillis() + (jwtConfiguration.getDuration() * jwtConfiguration.getDuration()) * 1000))
                 .claims(claims)
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfiguration.getSecret())))
                 .compact();
@@ -53,16 +49,17 @@ public class JwtTokenUtil {
     }
 
     public String getRutFromToken(String token) {
-        return getClaimFromToken(token, RUT).toString();
+        return getClaimFromToken(token, Constants.RUT).toString();
     }
 
     public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, USERNAME).toString();
+        return getClaimFromToken(token, Constants.USERNAME).toString();
     }
 
+    @SuppressWarnings("unchecked")
     public String[] getRolesFromToken(String token) {
         return ((List<String>) getAllClaimsFromToken(token)
-                .get(ROLES)).toArray(new String[0]);
+                .get(Constants.ROLES)).toArray(new String[0]);
     }
 
     public Object getClaimFromToken(String token, String key) {
@@ -72,7 +69,7 @@ public class JwtTokenUtil {
 
     public int getExpirationFromToken(String token) {
         return Integer.parseInt(getAllClaimsFromToken(token)
-                .get(EXPIRATION)
+                .get(Claims.EXPIRATION)
                 .toString());
     }
 
