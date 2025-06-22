@@ -49,6 +49,10 @@ dependencies {
 	testImplementation 'org.spockframework:spock-core:2.0-M4-groovy-3.0'
 	testImplementation 'org.codehaus.groovy:groovy-all:3.0.23'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Karate testing
+	testImplementation 'io.karatelabs:karate-junit5:1.5.1'
+	testImplementation 'io.karatelabs:karate-core:1.5.1:all'
 }
 
 tasks.named('test') {

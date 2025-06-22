@@ -16,7 +16,7 @@ public class GameService {
     private final GameRepository gameRepository;
 
     public List<GameDto> findAll() {
-        log.info("START Find All");
+        log.info("[START] Find All");
 
         List<Game> games = gameRepository.findAll();
 
@@ -39,7 +39,7 @@ public class GameService {
                         .build())
                 .collect(Collectors.toList());
 
-        log.info("FINISH Find All [{}]", mappedGames);
+        log.info("[FINISH] Find All [{}]", mappedGames);
 
         return mappedGames;
     }

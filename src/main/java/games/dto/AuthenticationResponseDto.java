@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import java.util.List;
 
 @Data
@@ -11,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponseDto {
+    @ToString.Exclude
     private String accessToken;
     private int expiration;
     private List<String> roles;

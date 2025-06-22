@@ -2,6 +2,7 @@ package games.controller;
 
 import games.dto.AuthenticationResponseDto;
 import games.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,15 +23,23 @@ public class AuthenticationController {
     @PostMapping(value = "token")
     @ResponseStatus(HttpStatus.OK)
     public AuthenticationResponseDto auth() {
+        log.info("[START] Auth");
+
         AuthenticationResponseDto authenticationResponseDto = authenticationService.auth();
+
+        log.info("[FINISH] Auth [{}]", authenticationResponseDto);
 
         return authenticationResponseDto;
     }
 
     @PostMapping(value = "security")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole(@environment.getProperty('oauth.authorization.operations.security').split(','))")
+    @PreAuthorize("hasAnyRole(@environment.getProperty('oauth.authorization.oauth.operations.security').split(','))")
+    @SecurityRequirement(name = "bearerAuth")
     public String security() {
+        log.info("[START] Security");
+
+        log.info("[FINISH] Security");
         return "OK";
     }
 }

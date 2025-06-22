@@ -1,3 +1,27 @@
+sourceSets {
+    automatedTest {
+        java {
+            srcDir 'src/automated-test/java'
+        }
+        resources {
+            srcDir 'src/automated-test/resources'
+        }
+    }
+}
+
+configurations {
+    automatedTestImplementation.extendsFrom testImplementation
+    automatedTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+tasks.register('automatedTest', Test) {
+    description = 'Runs the automated tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.automatedTest.output.classesDirs
+    classpath = sourceSets.automatedTest.runtimeClasspath
+    useJUnitPlatform()
+}
+
 test {
     jvmArgs '-Xms128m', '-Xmx512m', '-XX:+DisableExplicitGC'
     finalizedBy jacocoTestReport

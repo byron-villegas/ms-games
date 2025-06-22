@@ -33,11 +33,11 @@ public class GameController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<GameDto> findAll() {
-        log.info("START Find All");
+        log.info("[START] Find All");
 
         List<GameDto> games = gameService.findAll();
 
-        log.info("FINISH Find All [{}]", games);
+        log.info("[FINISH] Find All [{}]", games);
 
         return games;
     }
