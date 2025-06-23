@@ -16,6 +16,7 @@ public class OpenApiConfiguration {
     private String license;
     private String licenseUrl;
     private Server server;
+    private SecurityScheme securityScheme;
 
     @Data
     static class Contact {
@@ -28,5 +29,13 @@ public class OpenApiConfiguration {
     static class Server {
         private String url;
         private String description;
+    }
+
+    @Data
+    static class SecurityScheme {
+        private String name;
+        private String type;
+        private String scheme;
+        private String bearerFormat;
     }
 }

@@ -27,9 +27,7 @@ public class WebSecurityConfiguration {
         http
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
-                        .authenticationEntryPoint((request, response, ex) -> response
-                                .sendError(HttpStatus.UNAUTHORIZED.value(), ex.getMessage())))
+                .addFilterBefore(httpRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(securityConfiguration
                                 .getWhiteListUrls()
@@ -37,8 +35,9 @@ public class WebSecurityConfiguration {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .addFilterBefore(httpRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> response.setStatus(HttpStatus.UNAUTHORIZED.value()))
+                        .accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value())));
         return http.build();
     }
 

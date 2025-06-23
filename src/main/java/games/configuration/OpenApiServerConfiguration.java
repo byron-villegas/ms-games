@@ -45,11 +45,11 @@ public class OpenApiServerConfiguration {
                 .info(info)
                 .servers(Collections.singletonList(server))
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")))
+                        .addSecuritySchemes(openApiConfiguration.getSecurityScheme().getName(), new SecurityScheme()
+                                .type(SecurityScheme.Type.valueOf(openApiConfiguration.getSecurityScheme().getType()))
+                                .scheme(openApiConfiguration.getSecurityScheme().getScheme())
+                                .bearerFormat(openApiConfiguration.getSecurityScheme().getBearerFormat())))
                 .addSecurityItem(new SecurityRequirement()
-                        .addList("bearerAuth"));
+                        .addList(openApiConfiguration.getSecurityScheme().getName()));
     }
 }
